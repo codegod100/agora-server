@@ -8,4 +8,4 @@ RUN npm install
 COPY . .
 RUN mkdir -p /home/root/agora/
 RUN touch /home/root/agora/sources.yaml
-CMD ["/workspace/agora-server/run-dev.sh",]
+CMD ["/workspace/agora-server/run-dev.sh"]

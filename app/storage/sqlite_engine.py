@@ -94,7 +94,7 @@ def subnode_from_row(row):
         title=row["title"],
         body=row["body"],
         user=row["user"],
-        updated=row["updated_at"],
+        updated=row["updatedAt"],
     )
 
 

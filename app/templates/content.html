@@ -4,19 +4,19 @@
 
 <div class="content">
 
+    {% include "stoa.html" %}
+
     {% include "node.html" %}
 
     {# {% include "left.html" %}
 
     {% include "right.html" %} #}
 
-    {% include "pulled.html" %}
-
-    <div class="context">
+    <details class="context" open>
     <em>Loading context... (requires JavaScript)</em>
-    </div>
+    </details>
 
-    {% include "stoa.html" %}
+    {% include "pulled.html" %}
 
     {% include "related.html" %}
 

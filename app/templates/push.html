@@ -2,11 +2,17 @@
     {% for subnode in pushed_subnodes %}
     <div class="pushed-subnode">
         <div class="subnode-header">
-            <span class="subnode-id"><span class="subnode-links"><a href="/@{{subnode.user}}/{{subnode.wikilink}}">📄</a> push from <a href="/raw/{{subnode.uri}}">{{subnode.uri}}</a> by <a
+            <span class="subnode-id"><span class="subnode-links"><a href="/@{{subnode.user}}/{{subnode.wikilink}}">📄</a> incoming push from <a href="/raw/{{subnode.uri}}">{{subnode.uri}}</a> by <a
                         href="/@{{subnode.user}}">@{{subnode.user}}</a></span></span>
         </div>
         <ul>
+        {% if argument %}
+            <!-- executable subnode -->
+            {{ subnode.render(argument)|linkify|safe }}
+        {% else %}
             {{ subnode.render()|linkify|safe }}
+        {% endif %}
+
         </ul>
     </div>
     {% endfor %}

@@ -32,14 +32,14 @@
 	<!-- This is a development Agora, so it's likely better if it's not indexed (it might not be up most of the time). -->
 	<meta name="robots" content="noindex" />
 	{% endif %}
-	<meta name="description" content="The Agora is a crowdsourced distributed knowledge graph: {{config['URI_BASE']}}." />
+	<meta name="description" content="The Agora is a free knowledge commons: {{config['URI_BASE']}}." />
 	<meta name="HandheldFriendly" content="True" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<link rel="search" type="application/opensearchdescription+xml" title="Agora" href={{url_for('agora.search_xml')}}>
 	<link rel="stylesheet" type="text/css"
 		href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
 	<link rel="stylesheet" media="screen" type="text/css"
-		href="{{ url_for('static',filename='css/screen-light.css')}}?uncached163" id="theme-link" />
+		href="{{ url_for('static',filename='css/screen-light.css')}}?uncached166" id="theme-link" />
 
 	<script>
 		const APIBASE = "{{config['API_BASE']}}"
@@ -51,6 +51,7 @@
 	{% if node is defined %}
 	<script>
 		const NODENAME = "{{node.uri}}"
+		const ARG = "{{argument}}"
 		const WIKILINK = "{{node.wikilink}}"
 		const NODEDESC = "{{node.description}}"
 	</script>
@@ -78,22 +79,20 @@
 <body>
 	<nav>
         <div class="navigation">
-            <div class="navigation-links">
-				<a href="/"><img src="/static/img/agora.png" class="logo" width="36px" height="36px"></a>
-                <a href="/" style="text-decoration: none;"><strong>{{config['URI_BASE']}}</strong></a> <strong>⟶</strong>
-                <!-- ⸖ this is called a [[diple]], particularly [[Diple periestigmene]] -->
-				<a href="/nodes" style="text-decoration: none;">📚&nbsp;All Nodes</a>
-                | <a href="/latest" style="text-decoration: none;">🌀&nbsp;Latest</a>
-				| <a href="/random" style="text-decoration: none;">🎲️&nbsp;Random</a>
-				| <a href="/users" style="text-decoration: none;">🫂&nbsp;Users</a>
-				| <a href="/today" style="text-decoration: none;">📅&nbsp;Today</a>
-				| <a href="/journals" style="text-decoration: none;">📔&nbsp;Journals</a>
-                | <a href="/annotations" style="text-decoration: none;">✍&nbsp;Annotations</a>
-                | <a href="/settings" style="text-decoration: none;"><strong>⚙</strong>&nbsp;Settings</a>
-                | <a href="#" style="text-decoration: none;" id="theme-toggle">🌙&nbsp;Theme</a>
-                | <a href="/agora-help" style="text-decoration: none;" class="help-button">🙏&nbsp;Help</a>
-                | <a href="/join" style="text-decoration: none;">💪&nbsp;Join</a>
-			</div>
+            <a href="/"><img src="/static/img/agora.png" class="logo" width="36px" height="36px" title="An Agora is a Free Knowledge Commons."></a>
+            <a href="/" style="text-decoration: none;" title="You are in the {{config['AGORA_NAME']}}. This Agora is one of many."><strong>{{config['URI_BASE']}}</strong></a> <strong>⟶</strong>
+            <!-- ⸖ this is called a [[diple]], particularly [[Diple periestigmene]] -->
+            <span><a href="/nodes" style="text-decoration: none;">📚&nbsp;Nodes</a></span>
+            | <span><a href="/users" style="text-decoration: none;">🫂&nbsp;Users</a></span>
+            | <span><a href="/latest" style="text-decoration: none;">🌀&nbsp;Latest</a></span>
+            | <span><a href="/random" style="text-decoration: none;">🎲️&nbsp;Random</a></span>
+            | <span><a href="/today" style="text-decoration: none;">📅&nbsp;Today</a></span>
+            | <span><a href="/journals" style="text-decoration: none;">📔&nbsp;Journals</a></span>
+            | <span><a href="/annotations" style="text-decoration: none;">✍&nbsp;Annotations</a></span>
+            | <span><a href="/settings" style="text-decoration: none;"><strong>⚙</strong>&nbsp;Settings</a></span>
+            | <span><a href="#" style="text-decoration: none;" id="theme-toggle">🌙&nbsp;Theme</a></span>
+            | <span><a href="/join" style="text-decoration: none;">🙏&nbsp;Join</a></span>
+            | <span><a href="/agora-help" style="text-decoration: none;" class="help-button">🤯&nbsp;Help</a></span>
         </div>
 
         <hr />
@@ -101,7 +100,7 @@
 			<div class="topline-node">
 				<div class="topline-node-wrapper">
 					<div class="topline-query">
-						<button id="mini-cli-exec" value="exec" title="Searches known Agoras">search</button>
+						<button id="mini-cli-exec" value="exec" title="Searches in this Agora, and maybe others.">search</button>
 					</div>
 					<div class="topline-cli">
 						<form action="/exec" method="get">
@@ -127,11 +126,11 @@
 				<div class="topline-agora">
                     <strong>↳ in the <a href="{{config['URL']}}"><strong>{{config['AGORA_NAME']}}</strong></a> ⬎</strong>
 					<div>
-						<button id="pull-all" value="pull-all" title="Pulls (embeds) all links that can be pulled below">pull all</button>
+                        <button id="pull-all" value="pull-all" title='Tries to retrieve most resources that can be pulled below'>pull all</button>
                         <!--
 						<button id="fold-all" value="fold-all" title="Folds (collapses) embeds below">fold all</button>
-                        -->
                         <button id="retry-elsewhere" value="retry-elsewhere" title="Retries elsewhere (if possible); useful if any of the subnodes below surfaced errors">retry</button>
+                        -->
 					</div> 
 				</div>
 
@@ -154,14 +153,12 @@
 	<div id='footer'>
         <center>
         ⸎
-		Served by the <a href="{{config['URL_BASE']}}">{{config['AGORA_NAME']}}</a> at <strong>__NOW__</strong> in <strong>__EXECTIME__s</strong>
-        <p>
+		Served by the <a href="{{config['URL_BASE']}}">{{config['AGORA_NAME']}}</a> at <strong>__NOW__</strong> in <strong>__EXECTIME__s</strong>.
         {% if not embed %}
-        <strong>May you be happy!</strong>
+        May you be happy!
         {% else %}
-        <strong>May you be free from suffering!</strong>
+        May you be free!
         {% endif %}
-        </p>
         </center>
 	</div>
 

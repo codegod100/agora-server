@@ -15,60 +15,65 @@
 -->
 
 {% if not node.subnodes and not node.pushed_subnodes() %}
-<div class="node" id="{{node.uri}}">
-    <div class="node-header main-header"><span>📚 Node <a href="/{{node}}" title="A node in {{config['NAME']}}.">[[{{node.qstr}}]]</a></span></div>
+<details class="node" id="{{node.uri}}" open>
+    <summary class="node-header main-header"><span title="A Node is an Agora location. It contains resources contributed by users having to do with a location according to the Agora you're using.">📚 Node <a href="/{{node}}" title="A node in {{config['NAME']}}."><span class="node-name">[[{{node.qstr}}]]</span></a></span></summary>
     <div class="not-found subnode" data-author="agora">
-           <strong>Nobody has noded "<em>{{node.qstr}}</em>" yet.</strong>
-
-           <p>You can contribute in the following ways:
+           <strong>Nobody has noded "<a href="/{{node.qstr}}">{{node.qstr}}</a>"</strong> in this Agora yet, but you can do it if you want to:
 
             <ul>
             <li>
-                <strong>Write something anonymously.</strong>
+                <strong><a href="/join">Join</a> and contribute your self-hosted writing and media.</strong>
                 <ul>
-                <li>
-                Please feel free to write something in a Stoa. At least one such public document can be found in every Agora location.
-                </li>
-                </ul>
-            </li> 
-            <li>
-                <strong><a href="/sign-up">Sign in</a> to contribute your self-hosted writing.</strong>
-                <ul>
-                    <li>You can contribute resources directly from your blog, digital garden or personal wiki into the Agora <a href="/knowledge-commons">Knowledge Commons</a>.
+                    <li>You can integrate your blog, digital garden or wiki into this <a href="/knowledge-commons">knowledge commons</a>.
                     <li>Some setup required :) Please <a href="/agora-discuss">reach out</a> if interested and we'll try to help!</li>
                 </ul>
                 </li>
             </li>
             <li>
-                <strong>Contribute posts from social media.</strong>
+                <strong><a href="/post">Post</a> from social media and chat.</strong>
                 <ul>
                 <li>
-                If you interact with an <a href="/agora-bot">Agora bot</a> on Twitter, Mastodon or Matrix and mention a <a href='/node'>node</a> like [[<a href="/{{node.qstr}}">{{node.qstr}}</a>]], the Agora will try to link your post in the matching nodes and optionally save a copy of your writing.
+                    You can cross-post from the <a href="/fediverse">Fediverse</a> and <a href="/matrix">Matrix</a>.
+                </li>
+                <li>
+                    Follow an <a href="/agora-bot">Agora bot</a> and mention an entity using double square brackets notation (like [[<a href="/{{node.qstr}}">{{node.qstr}}</a>]]) and an Agora will try to link your post and optionally save a copy of your contribution.
+                </li>
                 </li>
                 </ul>
             </li> 
+            <li>
+                <strong><a href="/write">Write</a> in a Stoa.</strong>
+                <ul>
+                <li>
+                    What you write in locations marked as <a href="/stoas">Stoas</a> might be imported into this node later or otherwise found by future visitors.
+                </li>
+                <li>
+                Doesn't require signup. Go ahead and play :)
+                </li>
+                </ul>
+            </li> 
+
            </ul>
         </p>
-           <span>The Agora will try to surface related nodes below.</span>
-    </div>
+    </details>
 
 {% endif %} <!-- node without subnodes -->
 <!-- node div left open to share context code with the next case -->
 
 {% if node.subnodes or node.pushed_subnodes() %}
-    <div class="node" id="{{node.uri}}">
+    <details class="node" id="{{node.uri}}" open>
 
         {% if subnode %}
-            <div class="node-header main-header">
-                <span>📚 Node <a href="/{{node.uri}}">[[{{node.uri}}]]</a> <br /> 
-                   ↳ 📓 Subnode <a href="/{{node.qstr}}">[[{{node.qstr}}]]</a>
-                </span>
-            </div>
+            <summary class="node-header main-header">
+                📚 Node <a href="/{{node.uri}}"><span class="node-name">[[{{node.uri}}]]</span></a> <br /> 
+                   ↳ 📓 Resource <a href="/{{node.qstr}}">[[{{node.qstr}}]]</a>
+                
+           </summary>
         {% else %}
-            <div class="node-header main-header">
-                <span>📚 Node <a href="/{{node}}" title="A node is a collection of resources with a matching name or an explicit relationship to a context.">[[{{node.qstr}}]]</a>
+            <summary class="node-header main-header">
+                <span title="A node is a location in an Agora. It contains resources closely related to your search according to the Agora you're in.">📚 Node <a href="/{{node}}"><span class="node-name">[[{{node.qstr}}]]</span></a>
                 </span>
-            </div>
+            </summary>
             <!--
             <span class="node-actions">
                 <button id="pull-all" value="pull-all" title="Pulls embeds below">pull all</button>
@@ -79,11 +84,11 @@
 
         {% for subnode in node.subnodes %}
             <div class="subnode" data-author="{{subnode.user}}" id="subnode-{{loop.index}}">
-                <div class="subnode-header">
+                <div class="subnode-header" title="A subnode is a resource contributed by a user of this Agora that is believed to be relevant here.">
                     <span class="subnode-id">
                         <span class="subnode-links">
                             <a href="@{{subnode.user}}/{{node.uri}}"" title="subnode {{subnode.basename}}">📓</a> 
-                            <a href="/raw/{{subnode.uri}}"><tt title="{{subnode.uri}}">{{subnode.basename}}</tt></a> ({{subnode.type}}) by <a href="/@{{subnode.user}}">@<span class="subnode-user">{{subnode.user}}</span></a>
+                            <a href="/raw/{{subnode.uri}}"><tt title="{{subnode.uri}}">{{subnode.uri}}</tt></a> by <a href="/@{{subnode.user}}">@<span class="subnode-user">{{subnode.user}}</span></a>
                         </span>
                     </span>
 
@@ -101,8 +106,10 @@
                         {% if subnode.support %}
                             <a href="{{subnode.support}}" title="support (user specified)">🤗</a>
                         {% endif %}
+                        <!-- disabled 2023-10 as we never made these persist, and ranking code was seeding the console with exceptions.
                         <button onClick="downvote('{{loop.index}}')" title="uprank this subnode">⇣</button>
                         <button onClick="upvote('{{loop.index}}')" title="uprank this subnode">⇡</button> 
+                        -->
                         </span>
 
                             </span>
@@ -117,7 +124,7 @@
                             <a href="/raw/{{subnode.uri}}"><tt title="{{subnode.uri}}">{{subnode.basename}}</tt></a> by <a href="/@{{subnode.user}}">@<span class="subnode-user">{{subnode.user}}</span></a>
                         </span>
                         -->
-                        ⸎ last updated <strong>{{subnode.datetime.astimezone()}}</strong>
+                        ⸎  ({{subnode.type}}) last updated <strong>{{subnode.datetime.astimezone()}}</strong>
                     </span>
                 </div>
 
@@ -135,10 +142,12 @@
         -->
     </div>
 
-</div> <!-- closes node div-->
+</details> <!-- closes node div-->
 
 
 <script>
+    // This is not currently used actively and it throws exceptions, so disabling.
+    /*
 	function getAuthors(){
 		const authors = $.map($(".subnode"), function(subnode){
 			console.log(subnode)
@@ -198,4 +207,5 @@
 	$(function(){
 		sort();
 	})
+    */
 </script>

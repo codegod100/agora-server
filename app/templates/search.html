@@ -16,11 +16,13 @@
 -->
 
 {% if not subnode %}
-<div class="search">
-    <span class="search-agora-header">🔎 Full text search for <a href="/{{node}}">[[{{node.qstr}}]]</a></span>
+<details class="search">
 
-    <button class="pull-search" value="{{node.qstr}}">pull</button>
-    <div class="pulled-search-embed" id="pulled-search"></div>                           
-</div>
+    <summary> <span class="search-agora-header" title="Full text search for the exact terms you entered.">🔎 Text search for <a href="/{{node}}">[[{{node.qstr}}]]</a></span>
+    </summary>
+
+    <div class="pulled-search-embed" id="{{node.qstr}}"></div>                           
+
+</details>
 {% endif %}
 

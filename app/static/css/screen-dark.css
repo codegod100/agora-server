@@ -204,33 +204,22 @@ h6 {
     font-style: italic;
 }
 
-.navigation {
-    vertical-align: middle;
-    /* border-color: gray;
-    border-style: dotted;
-    margin: 10px; 
-    border-radius: 20px;
-    padding: 10px;
-    */
-}
-
-.navigation-links::-webkit-scrollbar {
+.navigation::-webkit-scrollbar {
     display: none;
 }
 
-.navigation-links {
-    display: block;
+.navigation {
+    display: flex;
+    gap: 5px; /* but will grow to fit, aren't we living in the future? :)
     vertical-align: middle;
     align-items: center;
-    /*margin: 0 auto;*/
-    text-align: justify;
-    /* text-align: center; */
     /* why doesn't this work? */
     overflow-x: scroll;
     white-space: nowrap;
-    justify-content: center;
     align-content: center;
     align-items: center;
+    width: 100%;
+    justify-content: space-between;
 
     /* hide scrollbar if one is needed, but allow scrolling */
     -ms-overflow-style: none;  /* Internet Explorer 10+ */
@@ -411,10 +400,18 @@ input[type="text"] {
 }
 
 .node-header, .context-header, .stoa-header, .ctzn-header {
-    display: flex;
+    justify-content: space-between;
     text-align: left;
     font-weight: bolder;
     padding-bottom: 2px;
+}
+
+details > summary {
+    cursor: pointer;
+}
+
+.node-name {
+    text-transform: capitalize;
 }
 
 .not-found {
@@ -481,7 +478,6 @@ Served by the Agora of Flancia in 15.67 seconds on 2023-07-15 22:09:20. May you 
 .search {
     overflow: auto;
     gap: 10px;
-    max-height: 600px;
 }
 
 .search-agora-header, .search-internet-header {

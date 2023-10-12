@@ -20,19 +20,18 @@
 
 {% if not embed %}
 {% for n in pull_nodes %}
-<div class="pulled-node auto-pull">
-    <div class="node-header"><span>📚 Node <a href="/{{n.uri}}">[[{{n.description}}]]</a> pulled above 
-    <button class="pull-node auto-pull-button" value="{{n.uri}}">pull</button></span></div>
+<details class="pulled-node auto-pull">
+    <summary><span class="node-header" title="A node is a location in an Agora. It contains resources closely related to your search according to the Agora you're in.">📚 Node <a href="/{{n.uri}}"><span class="node-name">[[{{n.description}}]]</span></a></span> pulled by a user</summary>
     <div class="pulled-node-embed" id="{{n.uri}}"></div>
 
-</div>
+</details>
 {% endfor %}
 {% endif %}
 
 {% for n in auto_pull_nodes %}
-<div class="pulled-node">
+<details class="pulled-node">
     <!-- <span class="node-header">⭕ wormhole to <a href="/{{n.uri}}">[[{{n.description}}]]</a> offered by the Agora</span> -->
-    <div class="node-header"><span>📚 Node <a href="/{{n.uri}}">[[{{n.description}}]]</a> pulled by the Agora</span></div>
+    <summary><span class="node-header" title="A node is a location in an Agora. It contains resources closely related to your search according to the Agora you're in.">📚 Node <a href="/{{n.uri}}"><span class="node-name">[[{{n.description}}]]</span></a></span> pulled by an Agora</summary>
 
     {% if n.subnodes %}
     {% for subnode in n.subnodes %}
@@ -50,5 +49,5 @@
     {% else %}
     empty. <br />
     {% endif %}
-</div>
+</details>
 {% endfor %}

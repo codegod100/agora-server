@@ -200,6 +200,61 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
+
+  // this works and has already replaced most pull buttons for Agora sections.
+  // this is for 'zippies' that require pulling (e.g. pulled nodes).
+  var details = document.querySelectorAll("details");
+  details.forEach((item) => {
+    item.addEventListener("toggle", (event) => {
+        if (item.open) {
+            console.log("Details have been shown");
+            embed = item.querySelector(".pulled-node-embed");
+            if (embed) {
+                let node = embed.id;
+                console.log("Embed found, here we would pull.");
+                embed.innerHTML = '<iframe src="' + AGORAURL + '/embed/' + node + '" style="max-width: 100%;" width="99%" height="800px" allowfullscreen="allowfullscreen"></iframe>';
+            }
+        } else {
+            console.log("Details have been hidden");
+            embed = item.querySelector(".pulled-node-embed");
+            if (embed) {
+                console.log("Embed found, here we would fold.");
+                embed.innerHTML = '';
+            }
+        }
+    });
+  });
+
+  var details = document.querySelectorAll("details.search");
+  details.forEach((item) => {
+    item.addEventListener("toggle", async (event) => {
+        if (item.open) {
+            console.log("Details have been shown");
+            embed = item.querySelector(".pulled-search-embed");
+            if (embed) {
+                let qstr = embed.id;
+                console.log("Embed found, here we would pull.");
+                /*
+                $.get(AGORAURL + '/fullsearch/' + qstr, function (data) {
+                    $("#pulled-search.pulled-search-embed").html(data);
+                });
+                */
+                response = await fetch(AGORAURL + '/fullsearch/' + qstr);
+                embed.innerHTML = await response.text();
+            }
+        } else {
+            console.log("Details have been hidden");
+            embed = item.querySelector(".pulled-search-embed");
+            if (embed) {
+                console.log("Embed found, here we would fold.");
+                embed.innerHTML = '';
+            }
+        }
+    });
+  });
+
+  // end zippies.
+
   // pull nodes from the [[agora]]
   // pull-node are high-ranking (above the 'fold' of context), .pull-related-node are looser links below.
   $(".pull-node").click(function (e) {
@@ -443,12 +498,20 @@ document.addEventListener("DOMContentLoaded", function () {
    $(".pushed-subnodes-embed").each(function (e) {
       // auto pull pushed subnodes by default.
       // it would be better to infer this from node div id?
-      let node = NODENAME
+      let node = NODENAME;
+      let arg = ARG;
       let id = "#" + node + " .pushed-subnodes-embed";
       console.log('auto pulling pushed subnodes, will write to id: ' + id);
-      $.get(AGORAURL + '/push/' + node, function (data) {
-        $(id).html(data);
-      });
+      if (arg != '') {
+        $.get(AGORAURL + '/push/' + node + '/' + arg, function (data) {
+            $(id).html(data);
+        });
+      }
+      else {
+        $.get(AGORAURL + '/push/' + node, function (data) {
+            $(id).html(data);
+        });
+      }
       // end auto pull pushed subnodes.
     });
 
@@ -663,6 +726,7 @@ document.addEventListener("DOMContentLoaded", function () {
       this.click();
     });
   }
+
   */
 
  if (localStorage["ranking"]) {
@@ -718,5 +782,5 @@ function loadGraph() {
     },
 
   });
-
 }
+

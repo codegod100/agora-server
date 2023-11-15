@@ -35,6 +35,8 @@ from mistralai.models.chat_completion import ChatMessage
 from . import forms, providers, render, util
 from .storage import api, feed, graph
 
+from app.storage.lib import update
+
 bp = Blueprint("agora", __name__)
 CORS(bp)
 
@@ -57,6 +59,7 @@ def before_request():
         # prefix = 'https://' if 'https' in request.base_url else 'http://'
         prefix = 'https://' # if 'https' in request.base_url else 'http://'
         current_app.config["URL_BASE"] = prefix + current_app.config["URI_BASE"]
+    update()
 
 
 @bp.after_request
@@ -157,6 +160,7 @@ def node2(node0, node1):
         config=current_app.config,
         # annotations_enabled=True,
     )
+
 
 @bp.route("/feed/<node>")
 def node_feed(node):
@@ -503,7 +507,6 @@ def go(node0, node1=""):
 
 @bp.route("/push/<node>/<other>")
 def push2(node, other):
-
     current_app.logger.info(f">>> push2 arg: {other}.")
     # returns by default an html view for the 'pushing here' section / what is being received in associated feeds
     n = api.build_node(node)
@@ -515,6 +518,7 @@ def push2(node, other):
         embed=True,
         node=n,
     )
+
 
 @bp.route("/push/<node>")
 def push(node):

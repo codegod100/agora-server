@@ -71,6 +71,9 @@ thefuzz = "^0.20.0"
 smartypants = "^2.0.1"
 mistralai = "^0.0.8"
 pycryptodome = "^3.19.0"
+sqlalchemy = "^2.0.23"
+pytest = "^7.4.3"
+gitpython = "^3.1.40"
 
 [tool.poetry.dev-dependencies]
 

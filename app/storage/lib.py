@@ -1,6 +1,8 @@
 import os
+import app.storage.embedding as embedding
 from pathlib import Path
 from app.storage.model import Subnode, session, User
+from flask import current_app
 
 
 def get_markdown_files(folder_path):
@@ -88,9 +90,11 @@ def changes(last_sha, user_folder):
 
 
 def update():
-    users_folder = os.environ.get("GARDEN_FOLDER")
+    users_folder = os.environ.get("GARDEN_FOLDER",os.path.join(current_app.config["AGORA_PATH"],"garden"))
 
     markdown = markdown_files(users_folder)
+    if markdown == {}:
+        return
     subnodes = []
     for user in markdown:
         files = markdown[user]
@@ -102,7 +106,7 @@ def update():
                 path=file["file_path"],
                 body=file["file_content"],
             )
-            # subnodes.append(subnode)
+            subnodes.append(subnode)
             found = (
                 session.query(Subnode)
                 .where(Subnode.user == user, Subnode.title == title)
@@ -113,5 +117,9 @@ def update():
                 continue
             session.add(subnode)
     # session.bulk_save_objects(subnodes)
-
     session.commit()
+    ids = [str(subnode.id) for subnode in subnodes]
+    metadatas = [{title: subnode.title, user: subnode.user} for subnode in subnodes]
+    documents = [subnode.body for subnode in subnodes]
+    embedding.upsert(ids,metadatas,documents)
+

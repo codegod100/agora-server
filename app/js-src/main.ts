@@ -471,9 +471,9 @@ document.addEventListener("DOMContentLoaded", async function () {
       console.log('auto pulling pushed subnodes, will write to id: ' + id);
       let response;
       if (arg != '') {
-      response = await fetch(AGORAURL + '/push/' + node + '/' + arg);
+        response = await fetch(AGORAURL + '/push/' + node + '/' + arg);
       } else {
-      response = await fetch(AGORAURL + '/push/' + node);
+        response = await fetch(AGORAURL + '/push/' + node);
       }
       const data = await response.text();
       document.querySelector(id).innerHTML = data;
@@ -490,51 +490,56 @@ document.addEventListener("DOMContentLoaded", async function () {
       const data = await response.text();
       document.querySelector(id).innerHTML = data;
       console.log('auto pulled context');
-      
+
       // Finally!
+
+      let Graph
+      const container = document.getElementById('graph');
+      if (container) {
+        Graph = ForceGraph()(container);
+      }
 
       console.log("loading graph...")
       fetch("/graph/json/" + node).then(res => res.json()).then(data => {
-      const container = document.getElementById('graph');
-      const currentTheme = localStorage.getItem("theme") || 'light';
-      // const backgroundColor = (currentTheme == 'light' ? 'rgba(255, 255, 255, 1)' : 'rgba(50, 50, 50, 1)')
-      const backgroundColor = (currentTheme == 'light' ? 'rgba(255, 255, 255, 1)' : 'rgba(50, 50, 50, 1)')
-      const edgeColor = (currentTheme == 'light' ? 'rgba(100, 100, 100, 1)' : 'rgba(150, 150, 150, 1)')
+        if(!Graph) return
+        const currentTheme = localStorage.getItem("theme") || 'light';
+        // const backgroundColor = (currentTheme == 'light' ? 'rgba(255, 255, 255, 1)' : 'rgba(50, 50, 50, 1)')
+        const backgroundColor = (currentTheme == 'light' ? 'rgba(255, 255, 255, 1)' : 'rgba(50, 50, 50, 1)')
+        const edgeColor = (currentTheme == 'light' ? 'rgba(100, 100, 100, 1)' : 'rgba(150, 150, 150, 1)')
 
-      console.log('graph center:' + node)
-      const Graph = ForceGraph()(container);
+        console.log('graph center:' + node)
 
-      if (data.nodes.length > 100) {
+        if (data.nodes.length > 100) {
           // for "large" graphs, render nodes as circles.
           Graph.height(container.clientHeight)
-              .width(container.clientWidth)
-              .onNodeClick(node => {
-                  let url = "{{config['URL_BASE']}}/" + node.id;
-                  location.assign(url)
-              })
-              .graphData(data)
-              .nodeId('id')
-              .nodeVal('val')
-              .nodeAutoColorBy('group')
-          }
-          else {
+            .width(container.clientWidth)
+            .onNodeClick(node => {
+              let url = "{{config['URL_BASE']}}/" + node.id;
+              location.assign(url)
+            })
+            .graphData(data)
+            .nodeId('id')
+            .nodeVal('val')
+            .nodeAutoColorBy('group')
+        }
+        else  {
           // for "small" graphs, render nodes as labels.
-              Graph.height(container.clientHeight)
-              .width(container.clientWidth)
-              .onNodeClick(node => {
-                  let url = "{{config['URL_BASE']}}/" + node.id;
-                  location.assign(url)
-              })
-              .graphData(data)
-              .nodeId('id')
-              .nodeVal('val')
-              .nodeAutoColorBy('group')
-              .nodeCanvasObject((node, ctx, globalScale) => {
+          Graph.height(container.clientHeight)
+            .width(container.clientWidth)
+            .onNodeClick(node => {
+              let url = "{{config['URL_BASE']}}/" + node.id;
+              location.assign(url)
+            })
+            .graphData(data)
+            .nodeId('id')
+            .nodeVal('val')
+            .nodeAutoColorBy('group')
+            .nodeCanvasObject((node, ctx, globalScale) => {
               const label = node.name;
-              var fontSize = 12/globalScale;
+              var fontSize = 12 / globalScale;
               if (node.id == node) {
-                  fontSize = 24/globalScale;
-                  }
+                fontSize = 24 / globalScale;
+              }
               ctx.font = `${fontSize}px Sans-Serif`;
               const textWidth = ctx.measureText(label).width;
               const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.2); // some padding
@@ -548,19 +553,19 @@ document.addEventListener("DOMContentLoaded", async function () {
               ctx.fillText(label, node.x, node.y);
 
               node.__bckgDimensions = bckgDimensions; // to re-use in nodePointerAreaPaint
-              })
-              .linkDirectionalArrowLength(3)
-              .linkColor(() => edgeColor)
-              //.d3Force('collision', d3.forceCollide(node => Math.sqrt(100 / (node.level + 1)) * NODE_REL_SIZE))
-              .nodePointerAreaPaint((node, color, ctx) => {
+            })
+            .linkDirectionalArrowLength(3)
+            .linkColor(() => edgeColor)
+            //.d3Force('collision', d3.forceCollide(node => Math.sqrt(100 / (node.level + 1)) * NODE_REL_SIZE))
+            .nodePointerAreaPaint((node, color, ctx) => {
               ctx.fillStyle = color;
               const bckgDimensions = node.__bckgDimensions;
               bckgDimensions && ctx.fillRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2, ...bckgDimensions);
-              });
-          }
-          Graph.zoom(3);
-          Graph.cooldownTime(5000); // default is 15000ms
-          Graph.onEngineStop(() => Graph.zoomToFit(400));
+            });
+        }
+        Graph.zoom(3);
+        Graph.cooldownTime(5000); // default is 15000ms
+        Graph.onEngineStop(() => Graph.zoomToFit(400));
       });
 
       // fit to canvas when engine stops
@@ -568,7 +573,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       console.log("graph loaded.")
     });
 
-  // This autoPull runs just after load of the node.
+    // This autoPull runs just after load of the node.
     if (autoPull) {
       console.log('auto pulling recommended (local, friendly-looking domains) resources!');
       // auto pull everything with class auto-pull by default.
@@ -589,117 +594,117 @@ document.addEventListener("DOMContentLoaded", async function () {
     // pull-node are high-ranking (above the 'fold' of context), .pull-related-node are looser links below.
     document.querySelectorAll(".pull-node").forEach(element => {
       element.addEventListener("click", function (e) {
-      let node = this.value;
+        let node = this.value;
 
-      if (this.classList.contains('pulled')) {
-        // already pulled.
-        document.querySelector(`#${node}.pulled-node-embed`).innerHTML = '';
-        this.innerText = 'pull';
-        this.classList.remove('pulled');
-      } else {
-        this.innerText = 'pulling';
-        console.log('pulling node');
-        // now with two methods! you can choose the simpler/faster one (just pulls static content) or the nerdy one (recursive) in settings.
-        if (pullRecursive) {
-        document.querySelector(`#${node}.pulled-node-embed`).innerHTML = `<iframe src="${AGORAURL}/embed/${node}" style="max-width: 100%;" allowfullscreen="allowfullscreen"></iframe>`;
+        if (this.classList.contains('pulled')) {
+          // already pulled.
+          document.querySelector(`#${node}.pulled-node-embed`).innerHTML = '';
+          this.innerText = 'pull';
+          this.classList.remove('pulled');
         } else {
-        fetch(`${AGORAURL}/pull/${node}`)
-          .then(response => response.text())
-          .then(data => {
-          document.querySelector(`#${node}.pulled-node-embed`).innerHTML = data;
-          });
+          this.innerText = 'pulling';
+          console.log('pulling node');
+          // now with two methods! you can choose the simpler/faster one (just pulls static content) or the nerdy one (recursive) in settings.
+          if (pullRecursive) {
+            document.querySelector(`#${node}.pulled-node-embed`).innerHTML = `<iframe src="${AGORAURL}/embed/${node}" style="max-width: 100%;" allowfullscreen="allowfullscreen"></iframe>`;
+          } else {
+            fetch(`${AGORAURL}/pull/${node}`)
+              .then(response => response.text())
+              .then(data => {
+                document.querySelector(`#${node}.pulled-node-embed`).innerHTML = data;
+              });
+          }
+          this.innerText = 'fold';
+          this.classList.add('pulled');
         }
-        this.innerText = 'fold';
-        this.classList.add('pulled');
-      }
       });
     });
 
     // pull arbitrary URL
     document.querySelectorAll(".pull-url").forEach(element => {
       element.addEventListener("click", function (e) {
-      console.log("in pull-url!");
-      if (this.classList.contains('pulled')) {
-        // already pulled.
-        this.innerText = 'pull';
-        this.nextElementSibling.remove();
-        this.classList.remove('pulled');
-      } else {
-        // pull.
-        this.innerText = 'pulling';
-        let url = this.value;
-        console.log('pull url : ' + url);
-        const iframe = document.createElement('iframe');
-        iframe.className = 'stoa2-iframe';
-        iframe.setAttribute('allow', 'camera; microphone; fullscreen; display-capture; autoplay');
-        iframe.src = url;
-        this.after(iframe);
-        this.innerText = 'fold';
-        this.classList.add('pulled');
-      }
+        console.log("in pull-url!");
+        if (this.classList.contains('pulled')) {
+          // already pulled.
+          this.innerText = 'pull';
+          this.nextElementSibling.remove();
+          this.classList.remove('pulled');
+        } else {
+          // pull.
+          this.innerText = 'pulling';
+          let url = this.value;
+          console.log('pull url : ' + url);
+          const iframe = document.createElement('iframe');
+          iframe.className = 'stoa2-iframe';
+          iframe.setAttribute('allow', 'camera; microphone; fullscreen; display-capture; autoplay');
+          iframe.src = url;
+          this.after(iframe);
+          this.innerText = 'fold';
+          this.classList.add('pulled');
+        }
       });
     });
 
     document.querySelectorAll(".pull-tweet").forEach(element => {
       element.addEventListener("click", function (e) {
-      if (this.classList.contains('pulled')) {
-        const div = this.nextElementSibling;
-        div.remove();
-        this.innerText = 'pull';
-        this.classList.remove('pulled');
-      } else {
-        this.innerText = 'pulling';
-        let tweet = this.value;
-        const blockquote = document.createElement('blockquote');
-        blockquote.className = 'twitter-tweet';
-        blockquote.setAttribute('data-theme', 'dark');
-        blockquote.innerHTML = `<a href="${tweet}"></a>`;
-        this.after(blockquote);
-        const script = document.createElement('script');
-        script.async = true;
-        script.src = "https://platform.twitter.com/widgets.js";
-        script.charset = "utf-8";
-        this.after(script);
-        this.classList.add('pulled');
-        this.innerText = 'fold';
-      }
+        if (this.classList.contains('pulled')) {
+          const div = this.nextElementSibling;
+          div.remove();
+          this.innerText = 'pull';
+          this.classList.remove('pulled');
+        } else {
+          this.innerText = 'pulling';
+          let tweet = this.value;
+          const blockquote = document.createElement('blockquote');
+          blockquote.className = 'twitter-tweet';
+          blockquote.setAttribute('data-theme', 'dark');
+          blockquote.innerHTML = `<a href="${tweet}"></a>`;
+          this.after(blockquote);
+          const script = document.createElement('script');
+          script.async = true;
+          script.src = "https://platform.twitter.com/widgets.js";
+          script.charset = "utf-8";
+          this.after(script);
+          this.classList.add('pulled');
+          this.innerText = 'fold';
+        }
       });
     });
 
     // pull a mastodon status (toot) using the roughly correct way IIUC.
     document.querySelectorAll(".pull-mastodon-status").forEach(element => {
       element.addEventListener("click", function (e) {
-      if (this.classList.contains('pulled')) {
-        const div = this.nextElementSibling;
-        div.remove();
-        this.innerText = 'pull';
-        this.classList.remove('pulled');
-      } else {
-        this.innerText = 'pulling';
-        statusContent(this);
-        this.classList.add('pulled');
-        this.innerText = 'fold';
-      }
+        if (this.classList.contains('pulled')) {
+          const div = this.nextElementSibling;
+          div.remove();
+          this.innerText = 'pull';
+          this.classList.remove('pulled');
+        } else {
+          this.innerText = 'pulling';
+          statusContent(this);
+          this.classList.add('pulled');
+          this.innerText = 'fold';
+        }
       });
     });
 
     // pull a pleroma status (toot) using the laziest way I found, might be a better one
     document.querySelectorAll(".pull-pleroma-status").forEach(element => {
       element.addEventListener("click", function (e) {
-      let toot = this.value;
-      const iframe = document.createElement('iframe');
-      iframe.src = toot;
-      iframe.className = 'mastodon-embed';
-      iframe.style.maxWidth = '100%';
-      iframe.width = '400';
-      iframe.setAttribute('allowfullscreen', 'allowfullscreen');
-      this.after(document.createElement('br'));
-      this.after(iframe);
-      const script = document.createElement('script');
-      script.src = "https://freethinkers.lgbt/embed.js";
-      script.async = true;
-      this.after(script);
-      this.innerText = 'pulled';
+        let toot = this.value;
+        const iframe = document.createElement('iframe');
+        iframe.src = toot;
+        iframe.className = 'mastodon-embed';
+        iframe.style.maxWidth = '100%';
+        iframe.width = '400';
+        iframe.setAttribute('allowfullscreen', 'allowfullscreen');
+        this.after(document.createElement('br'));
+        this.after(iframe);
+        const script = document.createElement('script');
+        script.src = "https://freethinkers.lgbt/embed.js";
+        script.async = true;
+        this.after(script);
+        this.innerText = 'pulled';
       });
     });
 
@@ -707,41 +712,41 @@ document.addEventListener("DOMContentLoaded", async function () {
     document.querySelector("#pull-all")?.addEventListener("click", function (e) {
       console.log('auto pulling all!');
       document.querySelectorAll(".pull-node").forEach(element => {
-      if (!element.classList.contains('pulled')) {
-        console.log('auto pulling nodes');
-        element.click();
-      }
+        if (!element.classList.contains('pulled')) {
+          console.log('auto pulling nodes');
+          element.click();
+        }
       });
       document.querySelectorAll(".pull-mastodon-status").forEach(element => {
-      if (!element.classList.contains('pulled')) {
-        console.log('auto pulling activity');
-        element.click();
-      }
+        if (!element.classList.contains('pulled')) {
+          console.log('auto pulling activity');
+          element.click();
+        }
       });
       document.querySelectorAll(".pull-tweet").forEach(element => {
-      if (!element.classList.contains('pulled')) {
-        console.log('auto pulling tweet');
-        element.click();
-      }
+        if (!element.classList.contains('pulled')) {
+          console.log('auto pulling tweet');
+          element.click();
+        }
       });
       document.querySelectorAll(".pull-search").forEach(element => {
-      if (!element.classList.contains('pulled')) {
-        console.log('auto pulling search');
-        element.click();
-      }
+        if (!element.classList.contains('pulled')) {
+          console.log('auto pulling search');
+          element.click();
+        }
       });
       document.querySelectorAll(".pull-url").forEach(element => {
-      if (!element.classList.contains('pulled')) {
-        console.log('auto pulling url');
-        element.click();
-      }
+        if (!element.classList.contains('pulled')) {
+          console.log('auto pulling url');
+          element.click();
+        }
       });
 
       // experiment: make pull button expand all details.
       var details = document.querySelectorAll("details.related summary, details.pulled summary, details:not([open]):is(.node) summary, details.stoa > summary, details.search > summary");
       details.forEach(item => {
-      console.log('trying to click details');
-      item.click();
+        console.log('trying to click details');
+        item.click();
       });
     });
 
@@ -749,41 +754,41 @@ document.addEventListener("DOMContentLoaded", async function () {
     document.querySelector("#fold-all")?.addEventListener("click", function (e) {
       // Already pulled -> fold.
       document.querySelectorAll(".pull-node").forEach(element => {
-      if (element.classList.contains('pulled')) {
-        console.log('auto folding nodes');
-        element.click();
-      }
+        if (element.classList.contains('pulled')) {
+          console.log('auto folding nodes');
+          element.click();
+        }
       });
       document.querySelectorAll(".pull-mastodon-status").forEach(element => {
-      if (element.classList.contains('pulled')) {
-        console.log('auto folding activity');
-        element.click();
-      }
+        if (element.classList.contains('pulled')) {
+          console.log('auto folding activity');
+          element.click();
+        }
       });
       document.querySelectorAll(".pull-tweet").forEach(element => {
-      if (element.classList.contains('pulled')) {
-        console.log('auto folding tweet');
-        element.click();
-      }
+        if (element.classList.contains('pulled')) {
+          console.log('auto folding tweet');
+          element.click();
+        }
       });
       document.querySelectorAll(".pull-search").forEach(element => {
-      if (element.classList.contains('pulled')) {
-        console.log('auto folding search');
-        element.click();
-      }
+        if (element.classList.contains('pulled')) {
+          console.log('auto folding search');
+          element.click();
+        }
       });
       document.querySelectorAll(".pull-url").forEach(element => {
-      if (element.classList.contains('pulled')) {
-        console.log('auto pulling url');
-        element.click();
-      }
+        if (element.classList.contains('pulled')) {
+          console.log('auto pulling url');
+          element.click();
+        }
       });
 
       // experiment: make fold button fold all details which are open.
       var details = document.querySelectorAll("details[open] > summary");
       details.forEach(item => {
-      console.log('trying to click details');
-      item.click();
+        console.log('trying to click details');
+        item.click();
       });
     });
 
@@ -833,10 +838,10 @@ document.addEventListener("DOMContentLoaded", async function () {
       let id = '.context-all';
       console.log('auto pulling whole Agora graph, will write to id: ' + id);
       fetch(AGORAURL + '/context/all')
-      .then(response => response.text())
-      .then(data => {
-        document.querySelector(id).innerHTML = data;
-      });
+        .then(response => response.text())
+        .then(data => {
+          document.querySelector(id).innerHTML = data;
+        });
     });
 
     console.log('dynamic execution for node begins: ' + NODENAME)
@@ -871,12 +876,12 @@ document.addEventListener("DOMContentLoaded", async function () {
       const data = await response.text();
       const wiktionaryElement = document.querySelector(".wiktionary-search");
       if (data && wiktionaryElement) {
-      wiktionaryElement.innerHTML = data;
+        wiktionaryElement.innerHTML = data;
       } else {
-      console.log('got empty data from Wiktionary, hiding div');
-      if (wiktionaryElement) {
-        wiktionaryElement.style.display = 'none';
-      }
+        console.log('got empty data from Wiktionary, hiding div');
+        if (wiktionaryElement) {
+          wiktionaryElement.style.display = 'none';
+        }
       }
     } catch (error) {
       console.error('Error fetching Wiktionary data:', error);
@@ -893,7 +898,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       console.log('*** auto pulling node, trying to activate', element);
       element.click();
     });
-    }
+  }
 
   if (autoPullExtra) {
     console.log('auto pulling external resources!');
@@ -917,36 +922,36 @@ document.addEventListener("DOMContentLoaded", async function () {
       console.log('auto pulling node');
       element.click();
     });
-    }
+  }
 
-        // Get the elements
-    const featureLinkDialog = document.getElementById('feature-link-dialog');
-    // Check if the link exists on this page before adding listener
-    if (featureLinkDialog) {
-        const dialog = document.getElementById('not-implemented-dialog');
-        const closeButton = document.getElementById('close-dialog-btn');
+  // Get the elements
+  const featureLinkDialog = document.getElementById('feature-link-dialog');
+  // Check if the link exists on this page before adding listener
+  if (featureLinkDialog) {
+    const dialog = document.getElementById('not-implemented-dialog');
+    const closeButton = document.getElementById('close-dialog-btn');
 
-        // Check if dialog and button exist
-        if (dialog && closeButton) {
-            // Add click listener to the link
-            featureLinkDialog.addEventListener('click', function(ev) {
-                ev.preventDefault();
-                dialog.showModal();
-            });
+    // Check if dialog and button exist
+    if (dialog && closeButton) {
+      // Add click listener to the link
+      featureLinkDialog.addEventListener('click', function (ev) {
+        ev.preventDefault();
+        dialog.showModal();
+      });
 
-            // Add click listener to the close button
-            closeButton.addEventListener('click', function() {
-                dialog.close();
-            });
+      // Add click listener to the close button
+      closeButton.addEventListener('click', function () {
+        dialog.close();
+      });
 
-            // Optional: Close on backdrop click
-            dialog.addEventListener('click', function(e) {
-              if (e.target === dialog) {
-                 dialog.close();
-              }
-            });
+      // Optional: Close on backdrop click
+      dialog.addEventListener('click', function (e) {
+        if (e.target === dialog) {
+          dialog.close();
         }
+      });
     }
+  }
 
 
 });

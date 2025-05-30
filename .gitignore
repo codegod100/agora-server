@@ -17,3 +17,6 @@ garden.db*
 *.pem
 agora-server.log
 .aider*
+data/
+devbox*
+.env

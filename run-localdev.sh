@@ -14,7 +14,10 @@
 # limitations under the License.
 
 export MISTRAL_API_KEY=$(cat ~/flancia/secret/api/mistral.txt)
-while true; do
-    timeout 3600 ./run-dev.sh Local
-    sleep 2
-done
+npm run build
+export FLASK_APP=app
+export FLASK_ENV="development"
+export AGORA_CONFIG="LocalDevelopmentConfig"
+# This shouldn't be needed but it is when running as a systemd service for some reason.
+export PATH=$HOME/.local/bin:${PATH}
+uv run flask --debug run -h 0.0.0.0 -p 5017

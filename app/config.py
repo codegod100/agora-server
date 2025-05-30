@@ -217,7 +217,7 @@ class DevelopmentConfig(DefaultConfig):
 
 class LocalDevelopmentConfig(DefaultConfig):
     # Empty is better if you e.g. want to access this on localhost:5017 but also on the IP that the dev machine has in the LAN.
-    URL_BASE = ""
+    URL_BASE = "http://localhost:5017"
     URI_BASE = "localhost:5017"
     API_BASE = "http://localhost:3000"
 
